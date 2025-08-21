@@ -16,102 +16,118 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Login',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-        ),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formkey,
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadiusGeometry.circular(24),
-                  child: Image.asset(
-                    'assets/AniWorld.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formkey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(24),
+                    child: Image.asset(
+                      'assets/AniWorld.png',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => email = value!,
-                ),
-
-                SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        obscure ? Icons.visibility : Icons.visibility_off,
-                        color: obscure ? Colors.grey : Colors.blue,
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => email = value!,
+                  ),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscure ? Icons.visibility : Icons.visibility_off,
+                          color: obscure ? Colors.grey : Colors.blue,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            obscure = !obscure;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: obscure,
+                    validator: (value) {
+                      if (value == null || value.isEmpty || value.length < 6) {
+                        return 'Please enter your password (min 6 chars)';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => password = value!,
+                  ),
+                  SizedBox(height: 20.0),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
                       onPressed: () {
-                        setState(() {
-                          obscure = !obscure;
-                        });
+                        Get.toNamed('/register');
                       },
+                      child: const Text(
+                        'don\'t have an account? Register',
+                        style: TextStyle(fontSize: 14.0),
+                      ),
                     ),
                   ),
-                  obscureText: obscure,
-                  validator: (value) {
-                    if (value == null || value.isEmpty || value.length < 6) {
-                      return 'Please enter your password (min 6 chars)';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => password = value!,
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
                     onPressed: () {
-                      Get.toNamed('/register');
+                      if (_formkey.currentState!.validate()) {
+                        _formkey.currentState!.save();
+                        Get.offNamed('/home');
+                      }
                     },
-                    child: const Text('don\'t have an account? Register'),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(fontSize: 16),
+                      selectionColor: Colors.blue,
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formkey.currentState!.validate()) {
-                      _formkey.currentState!.save();
-                      Get.offNamed('/home');
-                    }
-                  },
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 16),
-                    selectionColor: Colors.blue,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
